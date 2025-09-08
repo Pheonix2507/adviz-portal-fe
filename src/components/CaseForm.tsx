@@ -52,7 +52,7 @@ export interface Logs {
 export interface referenceDetail {
   name: string,
   contactNo: string,
-  documentLink?: string, 
+  documentLink?: string,
 }
 
 export interface user {
@@ -144,9 +144,9 @@ export const TransactionTo = {
 export type TransactionTo = (typeof TransactionTo)[keyof typeof TransactionTo];
 
 export const InsuranceType = {
-  NA : "NA",
-  THIRD_PARTY : "Third Party",
-  COMPREHENSIVE : "Comprehensive",
+  NA: "NA",
+  THIRD_PARTY: "Third Party",
+  COMPREHENSIVE: "Comprehensive",
 } as const;
 export type InsuranceType = (typeof InsuranceType)[keyof typeof InsuranceType];
 
@@ -237,7 +237,7 @@ export default function CaseForm() {
       conversion: false,
       numberPlate: "" as unknown as NumberPlate,
       addressChange: false,
-      insuranceType:"" as unknown as InsuranceType,
+      insuranceType: "" as unknown as InsuranceType,
       drc: false,
       remarks: "",
     },
@@ -395,26 +395,26 @@ export default function CaseForm() {
       })
       .finally(() => setLoading(false));
   }, [refreshFlag]);
-  
-    useEffect(() => {
-      setLoading(true);
-  
-      getActiveRto()
-        .then((resp) => {
-          const displayNames = resp?.data.map((item: any) => item.displayName);
-          displayNames.unshift("NA");
-          setRtos(displayNames);
-        })
-        .catch((err: any) => {
-          if (err?.status == 401 || err?.response?.status == 401) {
-            toast.showToast('Error', 'Session Expired', 'error');
-            logout();
-          } else {
-            toast.showToast('Error:', err?.message || 'Error during fetch of Firms', 'error');
-          }
-        })
-        .finally(() => setLoading(false));
-    }, [refreshFlag]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    getActiveRto()
+      .then((resp) => {
+        const displayNames = resp?.data.map((item: any) => item.displayName);
+        displayNames.unshift("NA");
+        setRtos(displayNames);
+      })
+      .catch((err: any) => {
+        if (err?.status == 401 || err?.response?.status == 401) {
+          toast.showToast('Error', 'Session Expired', 'error');
+          logout();
+        } else {
+          toast.showToast('Error:', err?.message || 'Error during fetch of Firms', 'error');
+        }
+      })
+      .finally(() => setLoading(false));
+  }, [refreshFlag]);
 
   useEffect(() => {
     if (user?.role === "employee" && user?.branchCode && user?.employeeCode) {
@@ -667,15 +667,16 @@ export default function CaseForm() {
                 name="generalDetails.incentiveAmount"
                 control={control}
                 rules={{
+                  required: "Incentive Amount is required.",
                   pattern: {
-                    value: /^\d*$/,
-                    message: "Only numeric values are allowed",
+                    value: /^\d+$/,
+                    message: "Only digits are allowed",
                   },
                 }}
                 render={({ field, fieldState }) => (
                   <div className="flex flex-col w-full">
                     <Label htmlFor="incentiveAmount" className="pb-2">
-                      Incentive Amount
+                      Incentive Amount <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="incentiveAmount"
@@ -685,12 +686,14 @@ export default function CaseForm() {
                       inputMode="numeric"
                       pattern="[0-9]*"
                       onChange={(e) => {
-                        // Only allow digits
                         const value = e.target.value.replace(/\D/g, "");
                         field.onChange(value);
                       }}
                       value={field.value ?? ""}
                     />
+                    {fieldState.error && (
+                      <p className="text-red-500 text-xs mt-1">{fieldState.error.message}</p>
+                    )}
                   </div>
                 )}
               />
@@ -810,9 +813,9 @@ export default function CaseForm() {
                         />
                       </div>
                       {filteredCode1.map((opt) => (
-                          <SelectItem key={opt} value={opt}>
-                            {opt}
-                          </SelectItem>
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -851,9 +854,9 @@ export default function CaseForm() {
                         onKeyDown={(e) => e.stopPropagation()} // 👈 Prevent bubbling to Select
                       />
                       {filteredCode2.map((opt) => (
-                          <SelectItem key={opt} value={opt}>
-                            {opt}
-                          </SelectItem>
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1197,30 +1200,30 @@ export default function CaseForm() {
               control={control}
               rules={{ required: "Insurance Type is required" }}
               render={({ field, fieldState }) => (
-              <div className="flex flex-col gap-1">
-                <Label className="py-2">Insurance Type<span className="text-red-500">*</span></Label>
-                <Select
-                {...field}
-                value={field.value}
-                onValueChange={(val) => field.onChange(val as InsuranceType)}
-                >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(InsuranceType).map((val) => (
-                  <SelectItem key={val} value={val}>
-                    {val}
-                  </SelectItem>
-                  ))}
-                </SelectContent>
-                </Select>
-                {fieldState.error && (
-                <p className="text-red-500 text-xs mt-1">
-                  {fieldState.error.message}
-                </p>
-                )}
-              </div>
+                <div className="flex flex-col gap-1">
+                  <Label className="py-2">Insurance Type<span className="text-red-500">*</span></Label>
+                  <Select
+                    {...field}
+                    value={field.value}
+                    onValueChange={(val) => field.onChange(val as InsuranceType)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(InsuranceType).map((val) => (
+                        <SelectItem key={val} value={val}>
+                          {val}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {fieldState.error && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </div>
               )}
             />
           </div>
@@ -1639,23 +1642,33 @@ export default function CaseForm() {
                 <Controller
                   name="expenseDetail.adminCharges"
                   control={control}
-                  render={({ field }) => (
+                  rules={{
+                    required: "Admin Charges are required.",
+                    pattern: {
+                      value: /^\d+$/,
+                      message: "Only digits are allowed",
+                    },
+                  }}
+                  render={({ field, fieldState }) => (
                     <div className="flex flex-col gap-1">
                       <Label className="py-3" htmlFor="adminCharges">
-                        Admin Charges
+                        Admin Charges <span className="text-red-500">*</span>
                       </Label>
                       <Input
-                        required
                         id="adminCharges"
-                        type="number"
                         placeholder="Enter a value"
                         {...field}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         value={field.value ?? ""}
                         onChange={(e) => {
-                          const val = e.target.value;
-                          field.onChange(val === "" ? "" : Number(val));
+                          const value = e.target.value.replace(/\D/g, "");
+                          field.onChange(value);
                         }}
                       />
+                      {fieldState.error && (
+                        <p className="text-red-500 text-xs mt-1">{fieldState.error.message}</p>
+                      )}
                     </div>
                   )}
                 />
@@ -1702,59 +1715,59 @@ export default function CaseForm() {
                 </div>
               )}
             />
-                <Controller
-                  name="referenceDetail.contactNo"
-                  control={control}
-rules={{
-  validate: value => {
-    if (!value) return true;
-    return /^[6-9]\d{9}$/.test(value) || "Phone No must be a valid 10-digit";
-  }
-}}
+            <Controller
+              name="referenceDetail.contactNo"
+              control={control}
+              rules={{
+                validate: value => {
+                  if (!value) return true;
+                  return /^[6-9]\d{9}$/.test(value) || "Phone No must be a valid 10-digit";
+                }
+              }}
 
-                  render={({ field }) => (
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="buyerPhoneNo">Reference Contact No</Label>
-                      <Input
-                        id="contactNo"
-                        placeholder="Reference Phone No"
-                        maxLength={10}
-                        {...field}
-                        onChange={e => {
-                          const val = e.target.value.replace(/\D/g, "");
-                          field.onChange(val);
-                        }}
-                      />
-                    </div>
-                  )}
-                />
-                    <Controller
-                      name="referenceDetail.documentLink"
-                      control={control}
-                      rules={{
-                      pattern: {
-                        value: /^(https?:\/\/[^\s]+)$/i,
-                        message: "Only valid links are allowed",
-                      },
-                      }}
-                      render={({ field, fieldState }) => (
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="documentLink">Document Link</Label>
-                        <Input
-                        id="documentLink"
-                        placeholder="Paste document URL"
-                        {...field}
-                        type="url"
-                        />
-                        {fieldState.error && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {fieldState.error.message}
-                        </p>
-                        )}
-                      </div>
-                      )}
-                    />
+              render={({ field }) => (
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="buyerPhoneNo">Reference Contact No</Label>
+                  <Input
+                    id="contactNo"
+                    placeholder="Reference Phone No"
+                    maxLength={10}
+                    {...field}
+                    onChange={e => {
+                      const val = e.target.value.replace(/\D/g, "");
+                      field.onChange(val);
+                    }}
+                  />
                 </div>
+              )}
+            />
+            <Controller
+              name="referenceDetail.documentLink"
+              control={control}
+              rules={{
+                pattern: {
+                  value: /^(https?:\/\/[^\s]+)$/i,
+                  message: "Only valid links are allowed",
+                },
+              }}
+              render={({ field, fieldState }) => (
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="documentLink">Document Link</Label>
+                  <Input
+                    id="documentLink"
+                    placeholder="Paste document URL"
+                    {...field}
+                    type="url"
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+          </div>
         </CardContent>
       </Card>
       <Button style={{ cursor: "pointer" }} type="submit">Submit Case</Button>

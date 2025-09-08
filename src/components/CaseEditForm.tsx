@@ -1,7 +1,7 @@
 // src/pages/EditCaseForm.tsx
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useForm, Controller} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -11,8 +11,8 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { useToast } from "@/context/ToastContext";
 import { updateCaseID } from "@/service/case.service";
 import type { Case, ExpenseDetail, ExpireDetail, FinalDetails, GeneralDetails, ownerDetails, VehicleDetail } from "./CaseForm";
-import { InsuranceType} from "./CaseForm";
-import { NumberPlate,TransactionTo, type TransactionDetail } from "@/components/CaseForm";
+import { InsuranceType } from "./CaseForm";
+import { NumberPlate, TransactionTo, type TransactionDetail } from "@/components/CaseForm";
 import { useAuth } from "@/context/AuthContext";
 import { indianStates, type Branch } from "./Branchform";
 import { useLoading } from "./LoadingContext";
@@ -142,86 +142,86 @@ export default function EditCaseForm() {
       .toUpperCase();
   }
 
-    const defaultValues = state?.caseData as FinalDetails;
+  const defaultValues = state?.caseData as FinalDetails;
   const id = state?.id as string;
-    const { control, handleSubmit, setValue, watch, reset, getValues } = useForm<FinalDetails>({
+  const { control, handleSubmit, setValue, watch, reset, getValues } = useForm<FinalDetails>({
     defaultValues,
   });
 
-useEffect(() => {
-  setLoading(true);
-  console.log("defaultValues:", defaultValues);
-  getFirmsD()
-    .then((resp) => {
-      const f = resp?.data.map((f: string) => f.toUpperCase());
-      setfirmsD(f);
-    })
-    .catch((err: any) => {
-      if (err?.status == 401 || err?.response?.status == 401) {
-        toast.showToast('Error', 'Session Expired', 'error');
-        logout();
-      } else {
-        toast.showToast('Error:', err?.message || 'Error during fetch of Firms', 'error');
-      }
-    })
-    .finally(() => setLoading(false));
-
-  getActiveRto()
-    .then((resp) => {
-      const displayNames = resp?.data.map((item: any) => item.displayName.toUpperCase());
-      displayNames.unshift("NA");
-      setRtos(displayNames);
-      
-      // 🎯 SET RTO VALUES IMMEDIATELY AFTER DATA LOADS
-      if (defaultValues?.vehicleDetail && displayNames.length > 0) {
-        const { fromRTO: defaultFromRTO, toRTO: defaultToRTO } = defaultValues.vehicleDetail;
-        
-        if (defaultFromRTO) {
-          const matchingFromRTO = displayNames.find((rto: string) => 
-            rto.toUpperCase().trim() === defaultFromRTO.toUpperCase().trim() ||
-            rto.replace(/\s+/g, '') === defaultFromRTO.replace(/\s+/g, '')
-          );
-          setValue("vehicleDetail.fromRTO", matchingFromRTO || defaultFromRTO);
+  useEffect(() => {
+    setLoading(true);
+    console.log("defaultValues:", defaultValues);
+    getFirmsD()
+      .then((resp) => {
+        const f = resp?.data.map((f: string) => f.toUpperCase());
+        setfirmsD(f);
+      })
+      .catch((err: any) => {
+        if (err?.status == 401 || err?.response?.status == 401) {
+          toast.showToast('Error', 'Session Expired', 'error');
+          logout();
+        } else {
+          toast.showToast('Error:', err?.message || 'Error during fetch of Firms', 'error');
         }
-        
-        if (defaultToRTO) {
-          const matchingToRTO = displayNames.find((rto: string) => 
-            rto.toUpperCase().trim() === defaultToRTO.toUpperCase().trim() ||
-            rto.replace(/\s+/g, '') === defaultToRTO.replace(/\s+/g, '')
-          );
-          setValue("vehicleDetail.toRTO", matchingToRTO || defaultToRTO);
-        }
-      }
-    })
-    .catch((err: any) => {
-      if (err?.status == 401 || err?.response?.status == 401) {
-        toast.showToast('Error', 'Session Expired', 'error');
-        logout();
-      } else {
-        toast.showToast('Error:', err?.message || 'Error during fetch of RTOs', 'error');
-      }
-    })
-    .finally(() => setLoading(false));
+      })
+      .finally(() => setLoading(false));
 
-}, [refreshFlag, defaultValues, setValue]);
-    // useEffect(() => {
-    //   setLoading(true);
-  
-    //   getActiveRto()
-    //     .then((resp) => {
-    //       const displayNames = resp?.data.map((item: any) => item.displayName.toUpperCase());
-    //       setRtos(displayNames);
-    //     })
-    //     .catch((err: any) => {
-    //       if (err?.status == 401 || err?.response?.status == 401) {
-    //         toast.showToast('Error', 'Session Expired', 'error');
-    //         logout();
-    //       } else {
-    //         toast.showToast('Error:', err?.message || 'Error during fetch of Firms', 'error');
-    //       }
-    //     })
-    //     .finally(() => setLoading(false));
-    // }, [refreshFlag]);
+    getActiveRto()
+      .then((resp) => {
+        const displayNames = resp?.data.map((item: any) => item.displayName.toUpperCase());
+        displayNames.unshift("NA");
+        setRtos(displayNames);
+
+        // 🎯 SET RTO VALUES IMMEDIATELY AFTER DATA LOADS
+        if (defaultValues?.vehicleDetail && displayNames.length > 0) {
+          const { fromRTO: defaultFromRTO, toRTO: defaultToRTO } = defaultValues.vehicleDetail;
+
+          if (defaultFromRTO) {
+            const matchingFromRTO = displayNames.find((rto: string) =>
+              rto.toUpperCase().trim() === defaultFromRTO.toUpperCase().trim() ||
+              rto.replace(/\s+/g, '') === defaultFromRTO.replace(/\s+/g, '')
+            );
+            setValue("vehicleDetail.fromRTO", matchingFromRTO || defaultFromRTO);
+          }
+
+          if (defaultToRTO) {
+            const matchingToRTO = displayNames.find((rto: string) =>
+              rto.toUpperCase().trim() === defaultToRTO.toUpperCase().trim() ||
+              rto.replace(/\s+/g, '') === defaultToRTO.replace(/\s+/g, '')
+            );
+            setValue("vehicleDetail.toRTO", matchingToRTO || defaultToRTO);
+          }
+        }
+      })
+      .catch((err: any) => {
+        if (err?.status == 401 || err?.response?.status == 401) {
+          toast.showToast('Error', 'Session Expired', 'error');
+          logout();
+        } else {
+          toast.showToast('Error:', err?.message || 'Error during fetch of RTOs', 'error');
+        }
+      })
+      .finally(() => setLoading(false));
+
+  }, [refreshFlag, defaultValues, setValue]);
+  // useEffect(() => {
+  //   setLoading(true);
+
+  //   getActiveRto()
+  //     .then((resp) => {
+  //       const displayNames = resp?.data.map((item: any) => item.displayName.toUpperCase());
+  //       setRtos(displayNames);
+  //     })
+  //     .catch((err: any) => {
+  //       if (err?.status == 401 || err?.response?.status == 401) {
+  //         toast.showToast('Error', 'Session Expired', 'error');
+  //         logout();
+  //       } else {
+  //         toast.showToast('Error:', err?.message || 'Error during fetch of Firms', 'error');
+  //       }
+  //     })
+  //     .finally(() => setLoading(false));
+  // }, [refreshFlag]);
 
 
 
@@ -271,12 +271,12 @@ useEffect(() => {
   //   );
   // }, [searchRTOfrom]);
 
-  
 
 
 
 
-    useEffect(() => {
+
+  useEffect(() => {
     if (user?.role === "employee" && user?.branchCode && user?.employeeCode) {
       setValue("generalDetail.branchCodeId", user.branchCode);
       setValue("generalDetail.employeeCodeId", user.id);
@@ -294,26 +294,26 @@ useEffect(() => {
   const formatDate = (dateStr: string | undefined): string | undefined =>
     dateStr?.split("T")[0] ?? undefined;
 
-    const [fromEx, setFromEx] = useState<string | null>(null);
-    const [toEx, setToEx] = useState<string | null>(null);
+  const [fromEx, setFromEx] = useState<string | null>(null);
+  const [toEx, setToEx] = useState<string | null>(null);
 
-useEffect(() => {
-  // Check if the values exist in rtos array
-  const fromRTO = watch("vehicleDetail.fromRTO");
-  const toRTO = watch("vehicleDetail.toRTO");
-  const fromExists = rtos.includes(fromRTO);
-  setFromEx(fromExists ? fromRTO : null);
-  if (!fromExists && fromRTO) {
-    setValue("vehicleDetail.fromRTO", "");
-  }
+  useEffect(() => {
+    // Check if the values exist in rtos array
+    const fromRTO = watch("vehicleDetail.fromRTO");
+    const toRTO = watch("vehicleDetail.toRTO");
+    const fromExists = rtos.includes(fromRTO);
+    setFromEx(fromExists ? fromRTO : null);
+    if (!fromExists && fromRTO) {
+      setValue("vehicleDetail.fromRTO", "");
+    }
 
-  const toExists = rtos.includes(toRTO);
-  setToEx(toExists ? toRTO : null);
-  if (!toExists && toRTO) {
-    setValue("vehicleDetail.toRTO", "");
-  }
+    const toExists = rtos.includes(toRTO);
+    setToEx(toExists ? toRTO : null);
+    if (!toExists && toRTO) {
+      setValue("vehicleDetail.toRTO", "");
+    }
 
-}, [defaultValues, rtos]);
+  }, [defaultValues, rtos]);
 
   const getFormattedCaseData = (data: FinalDetails): FinalDetails => ({
     ...data,
@@ -400,7 +400,7 @@ useEffect(() => {
           contactNo: string;
         },
       };
-      
+
 
       await updateCaseID(id, casePayload);
       toast.showToast('Success', 'Case Successfully Updated', 'success');
@@ -450,9 +450,9 @@ useEffect(() => {
       </div>
 
       <>
-      {!fromEx && <span className="text-red-600">* FromRTO field has been turned down edit it before submitting the CaseDetails.</span>}
-      <br />
-      {!toEx && <span className="text-red-600">* ToRTO field has been turned down edit it before submitting the CaseDetails.</span>}
+        {!fromEx && <span className="text-red-600">* FromRTO field has been turned down edit it before submitting the CaseDetails.</span>}
+        <br />
+        {!toEx && <span className="text-red-600">* ToRTO field has been turned down edit it before submitting the CaseDetails.</span>}
       </>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8 p-6">
@@ -506,80 +506,80 @@ useEffect(() => {
                   </div>
                 )}
               />
-{/* Branch Code (only for employee) */}
-{user?.role !== "superadmin" && (
-  <Controller
-    name="generalDetail.branchCodeId"
-    control={control}
-    rules={{ required: "Branch is required" }}
-    render={({ field, fieldState }) => {
-      const branchName =
-        branches.find((branch) => branch.branchCode === user?.branchCode)?.name ?? "";
+              {/* Branch Code (only for employee) */}
+              {user?.role !== "superadmin" && (
+                <Controller
+                  name="generalDetail.branchCodeId"
+                  control={control}
+                  rules={{ required: "Branch is required" }}
+                  render={({ field, fieldState }) => {
+                    const branchName =
+                      branches.find((branch) => branch.branchCode === user?.branchCode)?.name ?? "";
 
-      return (
-        <div className="flex flex-col w-full">
-          <Label htmlFor="branchCodeId" className="pb-2">
-            Branch Name
-          </Label>
-          <Input
-            readOnly
-            value={branchName}
-            className="bg-gray-100 cursor-not-allowed"
-          />
+                    return (
+                      <div className="flex flex-col w-full">
+                        <Label htmlFor="branchCodeId" className="pb-2">
+                          Branch Name
+                        </Label>
+                        <Input
+                          readOnly
+                          value={branchName}
+                          className="bg-gray-100 cursor-not-allowed"
+                        />
 
-          {/* Ensure branchCode is set correctly */}
-          {field.value !== user?.branchCode && (() => { field.onChange(user?.branchCode); return null; })()}
+                        {/* Ensure branchCode is set correctly */}
+                        {field.value !== user?.branchCode && (() => { field.onChange(user?.branchCode); return null; })()}
 
-          {fieldState.error && (
-            <p className="text-red-500 text-xs mt-1">{fieldState.error.message}</p>
-          )}
-        </div>
-      );
-    }}
-  />
-)}
+                        {fieldState.error && (
+                          <p className="text-red-500 text-xs mt-1">{fieldState.error.message}</p>
+                        )}
+                      </div>
+                    );
+                  }}
+                />
+              )}
 
-{/* Employee Code (only for employee) */}
-{user?.role !== "superadmin" && (
-  <Controller
-    name="generalDetail.employeeCodeId"
-    control={control}
-    rules={{ required: "Employee is required" }}
-    render={({ field, fieldState }) => {
-      // Find employee by employeeCode from logged-in user
-      const emp = branchEmp.find(
-        (e) => e.employeeCode === user?.employeeCode
-      );
+              {/* Employee Code (only for employee) */}
+              {user?.role !== "superadmin" && (
+                <Controller
+                  name="generalDetail.employeeCodeId"
+                  control={control}
+                  rules={{ required: "Employee is required" }}
+                  render={({ field, fieldState }) => {
+                    // Find employee by employeeCode from logged-in user
+                    const emp = branchEmp.find(
+                      (e) => e.employeeCode === user?.employeeCode
+                    );
 
-      // Sync UUID into RHF value if not already set
-      if (emp?.id && field.value !== emp.id) {
-        field.onChange(emp.id);
-      }
+                    // Sync UUID into RHF value if not already set
+                    if (emp?.id && field.value !== emp.id) {
+                      field.onChange(emp.id);
+                    }
 
-      return (
-        <div className="flex flex-col w-full">
-          <Label htmlFor="employeeCodeId" className="pb-2">
-            Employee Name
-          </Label>
-          <Input
-            readOnly
-            value={
-              emp
-                ? `${emp.firstName} ${emp.lastName} (${emp.employeeCode})`
-                : ""
-            }
-            className="bg-gray-100 cursor-not-allowed"
-          />
-          {fieldState.error && (
-            <p className="text-red-500 text-xs mt-1">
-              {fieldState.error.message}
-            </p>
-          )}
-        </div>
-      );
-    }}
-  />
-)}
+                    return (
+                      <div className="flex flex-col w-full">
+                        <Label htmlFor="employeeCodeId" className="pb-2">
+                          Employee Name
+                        </Label>
+                        <Input
+                          readOnly
+                          value={
+                            emp
+                              ? `${emp.firstName} ${emp.lastName} (${emp.employeeCode})`
+                              : ""
+                          }
+                          className="bg-gray-100 cursor-not-allowed"
+                        />
+                        {fieldState.error && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {fieldState.error.message}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }}
+                />
+              )}
 
 
 
@@ -591,15 +591,16 @@ useEffect(() => {
                   name="generalDetail.incentiveAmount"
                   control={control}
                   rules={{
+                    required: "Incentive Amount is required.",
                     pattern: {
-                      value: /^\d+(\.\d{1,2})?$/, // ✅ allow decimal with up to 2 places
-                      message: "Only numeric values are allowed",
+                      value: /^\d+$/,
+                      message: "Only digits are allowed",
                     },
                   }}
                   render={({ field, fieldState }) => (
                     <div className="flex flex-col w-full">
                       <Label htmlFor="incentiveAmount" className="pb-2">
-                        Incentive Amount
+                        Incentive Amount <span className="text-red-500">*</span>
                       </Label>
                       <Input
                         id="incentiveAmount"
@@ -609,12 +610,14 @@ useEffect(() => {
                         inputMode="numeric"
                         pattern="[0-9]*"
                         onChange={(e) => {
-                          // Only allow digits
-                          const value = e.target.value.replace(/[^0-9.]/g, "");
+                          const value = e.target.value.replace(/\D/g, "");
                           field.onChange(value);
                         }}
                         value={field.value ?? ""}
                       />
+                      {fieldState.error && (
+                        <p className="text-red-500 text-xs mt-1">{fieldState.error.message}</p>
+                      )}
                     </div>
                   )}
                 />
@@ -701,98 +704,98 @@ useEffect(() => {
                   </div>
                 )}
               />
-<Controller
-  name="vehicleDetail.fromRTO"
-  control={control}
-  rules={{ required: "From RTO is required" }}
-  render={({ field, fieldState }) => (
-    <div className="flex flex-col gap-1">
-      <Label htmlFor="fromRTO" className="pb-2">
-        From RTO<span className="text-red-500">*</span>
-      </Label>
-      <Select
-        required
-        value={field.value || ""} // Ensure empty string fallback
-        onValueChange={(value) => {
-          // console.log("FromRTO selected:", value);
-          field.onChange(value);
-        }}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select From RTO..." />
-        </SelectTrigger>
-        <SelectContent>
-          <div className="p-2">
-            <Input
-              placeholder="Search RTO"
-              value={searchRTOfrom}
-              onChange={(e) => setSearchRTOfrom(e.target.value)}
-              className="mb-2"
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => e.stopPropagation()}
-            />
-          </div>
-          {filteredCode1.map((opt) => (
-            <SelectItem key={opt} value={opt}>
-              {opt}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {fieldState.error && (
-        <p className="text-red-600 text-xs mt-1">
-          {fieldState.error.message}
-        </p>
-      )}
-    </div>
-  )}
-/>
-<Controller
-  name="vehicleDetail.toRTO"
-  control={control}
-  rules={{ required: "To RTO is required" }}
-  render={({ field, fieldState }) => (
-    <div className="flex flex-col gap-1">
-      <Label htmlFor="toRTO" className="pb-2">
-        To RTO<span className="text-red-500">*</span>
-      </Label>
-      <Select
-        required
-        value={field.value || ""} // Ensure empty string fallback
-        onValueChange={(value) => {
-          // console.log("ToRTO selected:", value);
-          field.onChange(value);
-        }}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select To RTO..." />
-        </SelectTrigger>
-        <SelectContent>
-          <div className="p-2">
-            <Input
-              placeholder="Search RTO"
-              value={searchRTOto}
-              onChange={(e) => setSearchRTOto(e.target.value)}
-              className="mb-2"
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => e.stopPropagation()}
-            />
-          </div>
-          {filteredCode2.map((opt) => (
-            <SelectItem key={opt} value={opt}>
-              {opt}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {fieldState.error && (
-        <p className="text-red-600 text-xs mt-1">
-          {fieldState.error.message}
-        </p>
-      )}
-    </div>
-  )}
-/>
+              <Controller
+                name="vehicleDetail.fromRTO"
+                control={control}
+                rules={{ required: "From RTO is required" }}
+                render={({ field, fieldState }) => (
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="fromRTO" className="pb-2">
+                      From RTO<span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      required
+                      value={field.value || ""} // Ensure empty string fallback
+                      onValueChange={(value) => {
+                        // console.log("FromRTO selected:", value);
+                        field.onChange(value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select From RTO..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <div className="p-2">
+                          <Input
+                            placeholder="Search RTO"
+                            value={searchRTOfrom}
+                            onChange={(e) => setSearchRTOfrom(e.target.value)}
+                            className="mb-2"
+                            onClick={(e) => e.stopPropagation()}
+                            onKeyDown={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                        {filteredCode1.map((opt) => (
+                          <SelectItem key={opt} value={opt}>
+                            {opt}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.error && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+              <Controller
+                name="vehicleDetail.toRTO"
+                control={control}
+                rules={{ required: "To RTO is required" }}
+                render={({ field, fieldState }) => (
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="toRTO" className="pb-2">
+                      To RTO<span className="text-red-500">*</span>
+                    </Label>
+                    <Select
+                      required
+                      value={field.value || ""} // Ensure empty string fallback
+                      onValueChange={(value) => {
+                        // console.log("ToRTO selected:", value);
+                        field.onChange(value);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select To RTO..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <div className="p-2">
+                          <Input
+                            placeholder="Search RTO"
+                            value={searchRTOto}
+                            onChange={(e) => setSearchRTOto(e.target.value)}
+                            className="mb-2"
+                            onClick={(e) => e.stopPropagation()}
+                            onKeyDown={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                        {filteredCode2.map((opt) => (
+                          <SelectItem key={opt} value={opt}>
+                            {opt}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.error && (
+                      <p className="text-red-600 text-xs mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
 
               <Controller
                 name="vehicleDetail.chassisNo"
@@ -1120,37 +1123,37 @@ useEffect(() => {
                   </div>
                 )}
               />
-                          <Controller
-                            name="transactionDetail.insuranceType"
-                            control={control}
-                            rules={{ required: "Insurance Type is required" }}
-                            render={({ field, fieldState }) => (
-                            <div className="flex flex-col gap-1">
-                              <Label className="py-2">Insurance Type<span className="text-red-500">*</span></Label>
-                              <Select
-                              {...field}
-                              value={field.value}
-                              onValueChange={(val) => field.onChange(val as InsuranceType)}
-                              >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Object.values(InsuranceType).map((val) => (
-                                <SelectItem key={val} value={val}>
-                                  {val}
-                                </SelectItem>
-                                ))}
-                              </SelectContent>
-                              </Select>
-                              {fieldState.error && (
-                              <p className="text-red-500 text-xs mt-1">
-                                {fieldState.error.message}
-                              </p>
-                              )}
-                            </div>
-                            )}
-                          />
+              <Controller
+                name="transactionDetail.insuranceType"
+                control={control}
+                rules={{ required: "Insurance Type is required" }}
+                render={({ field, fieldState }) => (
+                  <div className="flex flex-col gap-1">
+                    <Label className="py-2">Insurance Type<span className="text-red-500">*</span></Label>
+                    <Select
+                      {...field}
+                      value={field.value}
+                      onValueChange={(val) => field.onChange(val as InsuranceType)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(InsuranceType).map((val) => (
+                          <SelectItem key={val} value={val}>
+                            {val}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.error && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {(
@@ -1513,154 +1516,164 @@ useEffect(() => {
                   />
                 )
               )}
-                <Controller
-                    name="expenseDetail.otherCharges"
-                    control={control}
-                    render={({ field }) => (
-                      <div className="flex flex-col gap-1">
-                        <Label className="py-3" htmlFor="adminCharges">
-                          Other Charges
-                        </Label>
-                        <Input
-                          required
-                          id="otherCharges"
-                          type="number"
-                          placeholder="Enter a value"
-                          {...field}
-                          value={field.value ?? ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            field.onChange(val === "" ? "" : Number(val));
-                          }}
-                        />
-                      </div>
-                    )}
-                  />
+              <Controller
+                name="expenseDetail.otherCharges"
+                control={control}
+                render={({ field }) => (
+                  <div className="flex flex-col gap-1">
+                    <Label className="py-3" htmlFor="adminCharges">
+                      Other Charges
+                    </Label>
+                    <Input
+                      required
+                      id="otherCharges"
+                      type="number"
+                      placeholder="Enter a value"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        field.onChange(val === "" ? "" : Number(val));
+                      }}
+                    />
+                  </div>
+                )}
+              />
               {/* Show adminCharges only for superadmin */}
               {user?.role === "superadmin" && (
                 <>
                   <Controller
                     name="expenseDetail.adminCharges"
                     control={control}
-                    render={({ field }) => (
+                    rules={{
+                      required: "Admin Charges are required.",
+                      pattern: {
+                        value: /^\d+$/,
+                        message: "Only digits are allowed",
+                      },
+                    }}
+                    render={({ field, fieldState }) => (
                       <div className="flex flex-col gap-1">
                         <Label className="py-3" htmlFor="adminCharges">
-                          Admin Charges
+                          Admin Charges <span className="text-red-500">*</span>
                         </Label>
                         <Input
-                          required
                           id="adminCharges"
-                          type="number"
                           placeholder="Enter a value"
                           {...field}
+                          inputMode="numeric"
+                          pattern="[0-9]*"
                           value={field.value ?? ""}
                           onChange={(e) => {
-                            const val = e.target.value;
-                            field.onChange(val === "" ? "" : Number(val));
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
                           }}
                         />
+                        {fieldState.error && (
+                          <p className="text-red-500 text-xs mt-1">{fieldState.error.message}</p>
+                        )}
                       </div>
                     )}
                   />
                 </>
               )}
 
-                          <Controller
-                            name="expenseDetail.expenseRemarks"
-                            control={control}
-                            render={({ field }) => (
-                              <div className="col-span-1 md:col-span-4 flex flex-col">
-                                <Label className="py-3" htmlFor="expenseRemarks">
-                                Expense Remarks
-                                </Label>
-                                <Textarea
-                                  className=""
-                                  placeholder="Remarks"
-                                  {...field}
-                                  value={field.value?.toUpperCase() ?? ""}
-                                  onChange={e => field.onChange(e.target.value.toUpperCase())}
-                                />
-                              </div>
-                            )}
-                          />
+              <Controller
+                name="expenseDetail.expenseRemarks"
+                control={control}
+                render={({ field }) => (
+                  <div className="col-span-1 md:col-span-4 flex flex-col">
+                    <Label className="py-3" htmlFor="expenseRemarks">
+                      Expense Remarks
+                    </Label>
+                    <Textarea
+                      className=""
+                      placeholder="Remarks"
+                      {...field}
+                      value={field.value?.toUpperCase() ?? ""}
+                      onChange={e => field.onChange(e.target.value.toUpperCase())}
+                    />
+                  </div>
+                )}
+              />
             </div>
           </CardContent>
         </Card>
 
-              <Card>
-                <CardContent className="grid gap-4 p-6">
-                  <div className="text-xl font-semibold border-b-2">Reference Details</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-                    <Controller
-                      name="referenceDetail.name"
-                      control={control}
-                      render={({ field }) => (
-                      <div className="flex flex-col">
-                        <Label htmlFor="referenceName" className="pb-2">
-                        Reference Name
-                        </Label>
-                        <Input
-                        id="referenceName"
-                        placeholder="Reference Name"
-                        {...field}
-                        />
-                      </div>
-                      )}
+        <Card>
+          <CardContent className="grid gap-4 p-6">
+            <div className="text-xl font-semibold border-b-2">Reference Details</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <Controller
+                name="referenceDetail.name"
+                control={control}
+                render={({ field }) => (
+                  <div className="flex flex-col">
+                    <Label htmlFor="referenceName" className="pb-2">
+                      Reference Name
+                    </Label>
+                    <Input
+                      id="referenceName"
+                      placeholder="Reference Name"
+                      {...field}
                     />
-                    <Controller
-                      name="referenceDetail.contactNo"
-                      control={control}
-                      rules={{
-                      validate: value => {
-                        if (!value) return true;
-                        return /^[6-9]\d{9}$/.test(value) || "Phone No must be a valid 10-digit";
-                      }
+                  </div>
+                )}
+              />
+              <Controller
+                name="referenceDetail.contactNo"
+                control={control}
+                rules={{
+                  validate: value => {
+                    if (!value) return true;
+                    return /^[6-9]\d{9}$/.test(value) || "Phone No must be a valid 10-digit";
+                  }
+                }}
+                render={({ field }) => (
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="contactNo">Reference Contact No</Label>
+                    <Input
+                      id="contactNo"
+                      placeholder="Reference Phone No"
+                      maxLength={10}
+                      {...field}
+                      onChange={e => {
+                        const val = e.target.value.replace(/\D/g, "");
+                        field.onChange(val);
                       }}
-                      render={({ field }) => (
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="contactNo">Reference Contact No</Label>
-                        <Input
-                        id="contactNo"
-                        placeholder="Reference Phone No"
-                        maxLength={10}
-                        {...field}
-                        onChange={e => {
-                          const val = e.target.value.replace(/\D/g, "");
-                          field.onChange(val);
-                        }}
-                        />
-                      </div>
-                      )}
                     />
-                    <Controller
-                      name="referenceDetail.documentLink"
-                      control={control}
-                      rules={{
-                      pattern: {
-                        value: /^(https?:\/\/[^\s]+)$/i,
-                        message: "Only valid links are allowed",
-                      },
-                      }}
-                      render={({ field, fieldState }) => (
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="documentLink">Document Link</Label>
-                        <Input
-                        id="documentLink"
-                        placeholder="Paste document URL"
-                        {...field}
-                        type="url"
-                        />
-                        {fieldState.error && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {fieldState.error.message}
-                        </p>
-                        )}
-                      </div>
-                      )}
+                  </div>
+                )}
+              />
+              <Controller
+                name="referenceDetail.documentLink"
+                control={control}
+                rules={{
+                  pattern: {
+                    value: /^(https?:\/\/[^\s]+)$/i,
+                    message: "Only valid links are allowed",
+                  },
+                }}
+                render={({ field, fieldState }) => (
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="documentLink">Document Link</Label>
+                    <Input
+                      id="documentLink"
+                      placeholder="Paste document URL"
+                      {...field}
+                      type="url"
                     />
-                    </div>
-                </CardContent>
-              </Card>
+                    {fieldState.error && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
         <Button
           style={{ cursor: "pointer" }}
           type="submit"
